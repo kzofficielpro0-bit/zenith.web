@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ryze Web</title>
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --red: #b44fff;
+    --blue: #7c3aed;
+    --green: #a855f7;
+    --bg: #07050f;
+    --card-bg: #0f0a1a;
+    --border: #1e1230;
+    --text: #ffffff;
+    --muted: #8878aa;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Inter', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Animated particles */
+  .particles { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+  .particle {
+    position: absolute;
+    width: 3px; height: 3px;
+    background: rgba(255,255,255,0.3);
+    border-radius: 50%;
+    animation: float linear infinite;
+  }
+  @keyframes float {
+    0% { transform: translateY(100vh) translateX(0); opacity: 0; }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { transform: translateY(-100px) translateX(30px); opacity: 0; }
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 16px 20px;
+    background: rgba(10,10,15,0.95);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { font-family: 'Rajdhani', sans-serif; font-size: 1.4rem; font-weight: 700; }
+  .logo span:first-child { color: var(--red); }
+  .hamburger { display: flex; flex-direction: column; gap: 5px; cursor: pointer; }
+  .hamburger span { width: 22px; height: 2px; background: white; border-radius: 2px; }
+
+  /* SIDEBAR */
+  .sidebar-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.6); z-index: 200;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .sidebar-overlay.open { opacity: 1; pointer-events: all; }
+  .sidebar {
+    position: fixed; top: 0; right: -280px; width: 260px; height: 100%;
+    background: #111118; border-left: 1px solid var(--border);
+    z-index: 300; transition: right 0.3s ease; padding: 20px;
+  }
+  .sidebar.open { right: 0; }
+  .sidebar-close {
+    display: flex; justify-content: flex-end; margin-bottom: 20px;
+  }
+  .close-btn {
+    width: 36px; height: 36px; background: #1e1e2e; border: none;
+    border-radius: 8px; color: white; font-size: 1.1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .sidebar-nav { display: flex; flex-direction: column; gap: 4px; }
+  .sidebar-nav a {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 14px; color: var(--muted); text-decoration: none;
+    border-radius: 8px; font-size: 0.95rem; transition: all 0.2s;
+  }
+  .sidebar-nav a:hover { background: #1e1e2e; color: white; }
+  .sidebar-nav a .icon { font-size: 1rem; }
+
+  /* HERO */
+  .hero {
+    position: relative; z-index: 1;
+    text-align: center; padding: 60px 20px 40px;
+  }
+  .hero h1 { font-family: 'Rajdhani', sans-serif; font-size: 3rem; font-weight: 700; line-height: 1; }
+  .hero h1 .red { color: var(--red); }
+
+  /* FILTERS */
+  .filters {
+    position: relative; z-index: 1;
+    padding: 0 16px 16px; display: flex; flex-wrap: wrap; gap: 8px;
+    align-items: center; justify-content: space-between;
+  }
+  .filter-tags { display: flex; flex-wrap: wrap; gap: 8px; }
+  .tag {
+    padding: 8px 16px; border-radius: 20px; font-size: 0.85rem;
+    cursor: pointer; border: 1px solid var(--border);
+    background: #111118; color: var(--muted); transition: all 0.2s;
+    font-weight: 500;
+  }
+  .tag.active { background: var(--blue); color: white; border-color: var(--blue); }
+  .tag:hover:not(.active) { border-color: #333; color: white; }
+  .result-count { font-size: 0.85rem; color: var(--muted); white-space: nowrap; }
+
+  /* CARDS */
+  .cards {
+    position: relative; z-index: 1;
+    padding: 0 16px; display: flex; flex-direction: column; gap: 16px;
+  }
+
+  .card {
+    background: var(--card-bg); border-radius: 16px;
+    border: 1px solid var(--border); overflow: hidden;
+    transition: border-color 0.3s, transform 0.2s;
+  }
+  .card:hover { border-color: #333; transform: translateY(-2px); }
+
+  .card-preview {
+    position: relative; height: 180px;
+    background: linear-gradient(135deg, #0d0d1a 0%, #111128 100%);
+    overflow: hidden;
+  }
+  .card-preview-hub {
+    background: linear-gradient(135deg, #0d0d1a 0%, #131320 100%);
+  }
+  .card-preview-script {
+    background: linear-gradient(135deg, #0a0a14 0%, #0d1020 40%, #1a1a3a 100%);
+  }
+
+  /* Hub preview mockup */
+  .hub-mockup {
+    position: absolute; inset: 0; display: flex; padding: 12px; gap: 8px;
+  }
+  .hub-sidebar {
+    width: 70px; background: rgba(255,255,255,0.04);
+    border-radius: 8px; padding: 8px; display: flex; flex-direction: column; gap: 6px;
+  }
+  .hub-avatar {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: #333; margin: 0 auto 4px;
+    display: flex; align-items: center; justify-content: center; font-size: 0.6rem;
+  }
+  .hub-username { font-size: 0.55rem; text-align: center; color: white; margin-bottom: 6px; }
+  .hub-menu-item {
+    font-size: 0.5rem; color: var(--muted); padding: 3px 4px;
+    border-radius: 4px; cursor: pointer;
+  }
+  .hub-menu-item.active { background: rgba(255,255,255,0.1); color: white; }
+  .hub-main { flex: 1; background: rgba(255,255,255,0.02); border-radius: 8px; padding: 8px; }
+  .hub-title { font-size: 0.55rem; color: var(--muted); margin-bottom: 6px; font-weight: 600; letter-spacing: 0.05em; }
+
+  .card-badge {
+    position: absolute; top: 10px; right: 10px;
+    padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: 600;
+  }
+  .badge-hub { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); }
+  .badge-scripts { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+
+  .card-body { padding: 16px; }
+  .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+  .card-title { font-size: 1.05rem; font-weight: 700; }
+  .card-version {
+    font-size: 0.72rem; color: var(--muted); padding: 3px 8px;
+    background: rgba(255,255,255,0.05); border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .card-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
+  .card-actions { display: flex; gap: 8px; }
+
+  .btn-copy {
+    flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
+    padding: 12px; background: var(--blue); color: white;
+    border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
+    cursor: pointer; transition: opacity 0.2s, transform 0.1s;
+  }
+  .btn-copy:hover { opacity: 0.9; }
+  .btn-copy:active { transform: scale(0.98); }
+  .btn-copy.copied { background: #7c3aed; }
+
+  .btn-dl {
+    width: 44px; height: 44px; background: #1a1a2e;
+    border: 1px solid var(--border); border-radius: 10px;
+    color: white; font-size: 1rem; cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.2s;
+  }
+  .btn-dl:hover { background: #222235; }
+
+  /* SOON card */
+  .soon-card {
+    background: var(--card-bg); border-radius: 16px;
+    border: 1px solid var(--border); padding: 40px 20px;
+    text-align: center;
+  }
+  .soon-icon { font-size: 2.5rem; margin-bottom: 10px; color: var(--muted); }
+  .soon-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+  .soon-text { font-size: 2rem; font-weight: 700; color: var(--blue); font-family: 'Rajdhani', sans-serif; }
+  .soon-sub { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+
+  /* INSTALL GUIDE */
+  .install-guide {
+    position: relative; z-index: 1;
+    margin: 16px; padding: 20px;
+    background: var(--card-bg); border-radius: 16px;
+    border: 1px solid var(--border);
+  }
+  .guide-header { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .guide-icon {
+    width: 36px; height: 36px; background: rgba(124,58,237,0.2);
+    border-radius: 8px; display: flex; align-items: center; justify-content: center;
+    color: #a855f7; font-size: 0.9rem; font-weight: 700; font-family: monospace;
+  }
+  .guide-title { font-size: 1.1rem; font-weight: 700; }
+  .guide-step { margin-bottom: 14px; }
+  .guide-step-title { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+  .guide-step-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.5; }
+
+  /* FOOTER */
+  footer {
+    position: relative; z-index: 1;
+    text-align: center; padding: 20px;
+    font-size: 0.78rem; color: var(--muted);
+    border-top: 1px solid var(--border); margin-top: 20px;
+  }
+
+  /* TOAST */
+  .toast {
+    position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(60px);
+    background: #7c3aed; color: white; padding: 10px 20px;
+    border-radius: 10px; font-size: 0.85rem; font-weight: 600;
+    transition: transform 0.3s ease; z-index: 999; pointer-events: none;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* Hidden by default for filter */
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- PARTICLES -->
+<div class="particles" id="particles"></div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="overlay" onclick="closeSidebar()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-close">
+    <button class="close-btn" onclick="closeSidebar()">✕</button>
+  </div>
+  <nav class="sidebar-nav">
+    <a href="#" onclick="closeSidebar()">
+      <span class="icon">📚</span> Bibliothèque
+    </a>
+    <a href="#install" onclick="closeSidebar()">
+      <span class="icon">⬇️</span> Installation
+    </a>
+    <a href="#" onclick="closeSidebar()">
+      <span class="icon">💬</span> Support
+    </a>
+  </nav>
+</div>
+
+<!-- NAV -->
+<nav>
+  <div class="logo"><span>Ryze</span><span> World</span></div>
+  <div class="hamburger" onclick="openSidebar()">
+    <span></span><span></span><span></span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <h1><span class="red">Ryze</span> World</h1>
+</section>
+
+<!-- FILTERS -->
+<div class="filters">
+  <div class="filter-tags">
+    <button class="tag active" onclick="filter('all', this)">Tout</button>
+    <button class="tag" onclick="filter('hub', this)">Ryze Hub</button>
+    <button class="tag" onclick="filter('scripts', this)">Ryze Scripts</button>
+    <button class="tag" onclick="filter('paid', this)">Paid Script</button>
+  </div>
+  <span class="result-count" id="resultCount">2 résultats</span>
+</div>
+
+<!-- CARDS -->
+<div class="cards">
+
+  <!-- Ryze Hub -->
+  <div class="card" data-category="hub">
+    <div class="card-preview card-preview-hub">
+      <div class="hub-mockup">
+        <div class="hub-sidebar">
+          <div class="hub-avatar">💀</div>
+          <div class="hub-username">Nharox</div>
+          <div class="hub-menu-item active">STEAL</div>
+          <div class="hub-menu-item">Visuals</div>
+          <div class="hub-menu-item">Helper</div>
+        </div>
+        <div class="hub-main">
+          <div class="hub-title">AUTO KICK AFTER STEAL</div>
+          <div style="display:flex;gap:4px;flex-wrap:wrap;margin-top:4px;">
+            <div style="width:40px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;"></div>
+            <div style="width:28px;height:6px;background:rgba(255,255,255,0.07);border-radius:3px;"></div>
+          </div>
+        </div>
+      </div>
+      <span class="card-badge badge-hub">Ryze Hub</span>
+    </div>
+    <div class="card-body">
+      <div class="card-header">
+        <span class="card-title">Ryze Hub</span>
+        <span class="card-version">v1.0.0</span>
+      </div>
+      <p class="card-desc">Hub complet avec Instant Steal, Visuals, Helper et plus encore.</p>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyLink(this, 'https://github.com/ryze-hub')">
+          <span>⧉</span> Copier le lien
+        </button>
+        <button class="btn-dl" title="Télécharger">⬇</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ryze Ap Spammer -->
+  <div class="card" data-category="scripts">
+    <div class="card-preview card-preview-script">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+        <div style="text-align:center;opacity:0.3;">
+          <div style="font-size:2rem;margin-bottom:8px;">⚡</div>
+          <div style="font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);">AP SPAMMER</div>
+        </div>
+      </div>
+      <span class="card-badge badge-scripts">Ryze Scripts</span>
+    </div>
+    <div class="card-body">
+      <div class="card-header">
+        <span class="card-title">Ryze Ap Spammer</span>
+        <span class="card-version">v1.0.0</span>
+      </div>
+      <p class="card-desc">Script de spam AP pour Ryze.</p>
+      <div class="card-actions">
+        <button class="btn-copy" onclick="copyLink(this, 'https://github.com/ryze-scripts')">
+          <span>⧉</span> Copier le lien
+        </button>
+        <button class="btn-dl" title="Télécharger">⬇</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Paid Script SOON -->
+  <div class="soon-card" data-category="paid">
+    <div class="soon-icon">🕐</div>
+    <div class="soon-label">Paid Script</div>
+    <div class="soon-text">SOON...</div>
+    <div class="soon-sub">Bientôt disponible</div>
+  </div>
+
+</div>
+
+<!-- INSTALL GUIDE -->
+<div class="install-guide" id="install">
+  <div class="guide-header">
+    <div class="guide-icon">&gt;_</div>
+    <div class="guide-title">Guide d'installation</div>
+  </div>
+
+  <div class="guide-step">
+    <div class="guide-step-title">1. Télécharger l'outil</div>
+    <div class="guide-step-desc">Cliquez sur « Copier le lien » pour récupérer l'URL du dépôt, ou téléchargez directement le fichier d'instructions.</div>
+  </div>
+
+  <div class="guide-step">
+    <div class="guide-step-title">2. Installer les dépendances</div>
+    <div class="guide-step-desc">Ouvrez un terminal et exécutez les commandes fournies dans le fichier téléchargé.</div>
+  </div>
+
+  <div class="guide-step">
+    <div class="guide-step-title">3. Accès au Script payant</div>
+    <div class="guide-step-desc">Pour les outils premium, rejoignez le serveur Discord et ouvrez un ticket de support pour recevoir vos accès.</div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>© 2026 Ryze Web — Tous droits réservés</footer>
+
+<!-- TOAST -->
+<div class="toast" id="toast">✓ Lien copié !</div>
+
+<script>
+  // Particles
+  const container = document.getElementById('particles');
+  for (let i = 0; i < 25; i++) {
+    const p = document.createElement('div');
+    p.className = 'particle';
+    p.style.left = Math.random() * 100 + '%';
+    p.style.animationDuration = (8 + Math.random() * 12) + 's';
+    p.style.animationDelay = (Math.random() * 10) + 's';
+    p.style.opacity = Math.random() * 0.4 + 0.1;
+    container.appendChild(p);
+  }
+
+  // Sidebar
+  function openSidebar() {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('overlay').classList.add('open');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('overlay').classList.remove('open');
+  }
+
+  // Filter
+  function filter(cat, btn) {
+    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    const cards = document.querySelectorAll('.card, .soon-card');
+    let count = 0;
+    cards.forEach(c => {
+      const show = cat === 'all' || c.dataset.category === cat;
+      c.classList.toggle('hidden', !show);
+      if (show) count++;
+    });
+    document.getElementById('resultCount').textContent = count + (count > 1 ? ' résultats' : ' résultat');
+  }
+
+  // Copy
+  function copyLink(btn, url) {
+    navigator.clipboard.writeText(url).catch(() => {});
+    btn.classList.add('copied');
+    btn.innerHTML = '<span>✓</span> Copié !';
+    const toast = document.getElementById('toast');
+    toast.classList.add('show');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerHTML = '<span>⧉</span> Copier le lien';
+      toast.classList.remove('show');
+    }, 2000);
+  }
+</script>
+</body>
+</html>
