@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Ryze Web</title>
+<title>Ryze World</title>
 <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -164,6 +164,7 @@
   }
   .badge-hub { background: rgba(168,85,247,0.2); color: #c084fc; border: 1px solid rgba(168,85,247,0.4); }
   .badge-scripts { background: rgba(168,85,247,0.15); color: #c084fc; border: 1px solid rgba(168,85,247,0.3); }
+  .badge-paid { background: rgba(168,85,247,0.2); color: #f87171; border: 1px solid rgba(248,113,113,0.4); }
 
   .card-body { padding: 16px; }
   .card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
@@ -176,15 +177,14 @@
   .card-desc { font-size: 0.85rem; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
   .card-actions { display: flex; gap: 8px; }
 
-  .btn-copy {
+  .btn-buy {
     flex: 1; display: flex; align-items: center; justify-content: center; gap: 8px;
     padding: 12px; background: var(--blue); color: white;
     border: none; border-radius: 10px; font-size: 0.9rem; font-weight: 600;
     cursor: pointer; transition: opacity 0.2s, transform 0.1s;
   }
-  .btn-copy:hover { opacity: 0.9; }
-  .btn-copy:active { transform: scale(0.98); }
-  .btn-copy.copied { background: #7c3aed; }
+  .btn-buy:hover { opacity: 0.9; }
+  .btn-buy:active { transform: scale(0.98); }
 
   .btn-dl {
     width: 44px; height: 44px; background: #1a1a2e;
@@ -194,17 +194,6 @@
     transition: background 0.2s;
   }
   .btn-dl:hover { background: #222235; }
-
-  /* SOON card */
-  .soon-card {
-    background: var(--card-bg); border-radius: 16px;
-    border: 1px solid var(--border); padding: 40px 20px;
-    text-align: center;
-  }
-  .soon-icon { font-size: 2.5rem; margin-bottom: 10px; color: var(--muted); }
-  .soon-label { font-size: 0.85rem; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
-  .soon-text { font-size: 2rem; font-weight: 700; color: var(--blue); font-family: 'Rajdhani', sans-serif; }
-  .soon-sub { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
 
   /* INSTALL GUIDE */
   .install-guide {
@@ -290,7 +279,7 @@
     <button class="tag" onclick="filter('scripts', this)">Ryze Scripts</button>
     <button class="tag" onclick="filter('paid', this)">Paid Script</button>
   </div>
-  <span class="result-count" id="resultCount">2 résultats</span>
+  <span class="result-count" id="resultCount">3 résultats</span>
 </div>
 
 <!-- CARDS -->
@@ -358,12 +347,56 @@
     </div>
   </div>
 
-  <!-- Paid Script SOON -->
-  <div class="soon-card" data-category="paid">
-    <div class="soon-icon">🕐</div>
-    <div class="soon-label">Paid Script</div>
-    <div class="soon-text">SOON...</div>
-    <div class="soon-sub">Bientôt disponible</div>
+  <!-- Zenith Semi TP -->
+  <div class="card" data-category="paid">
+    <div class="card-preview card-preview-script">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+        <div style="text-align:center;opacity:0.3;">
+          <div style="font-size:2rem;margin-bottom:8px;">🎯</div>
+          <div style="font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);">SEMI TP</div>
+        </div>
+      </div>
+      <span class="card-badge badge-paid">Paid Script</span>
+    </div>
+    <div class="card-body">
+      <div class="card-header">
+        <span class="card-title">Zenith Semi TP</span>
+        <span class="card-version">v1.0.0</span>
+      </div>
+      <p class="card-desc">Script de téléportation semi-automatique pour Ryze.</p>
+      <div class="card-actions">
+        <a href="ton_lien_paypal" class="btn-buy" target="_blank">
+          <span>💰</span> Acheter
+        </a>
+        <button class="btn-dl" title="Télécharger">⬇</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Zenith Auto Duel -->
+  <div class="card" data-category="paid">
+    <div class="card-preview card-preview-script">
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+        <div style="text-align:center;opacity:0.3;">
+          <div style="font-size:2rem;margin-bottom:8px;">⚔️</div>
+          <div style="font-size:0.7rem;letter-spacing:0.1em;color:var(--muted);">AUTO DUEL</div>
+        </div>
+      </div>
+      <span class="card-badge badge-paid">Paid Script</span>
+    </div>
+    <div class="card-body">
+      <div class="card-header">
+        <span class="card-title">Zenith Auto Duel</span>
+        <span class="card-version">v1.0.0</span>
+      </div>
+      <p class="card-desc">Script de duel automatique pour Ryze.</p>
+      <div class="card-actions">
+        <a href="ton_lien_paypal" class="btn-buy" target="_blank">
+          <span>💰</span> Acheter
+        </a>
+        <button class="btn-dl" title="Télécharger">⬇</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -424,7 +457,7 @@
   function filter(cat, btn) {
     document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
     btn.classList.add('active');
-    const cards = document.querySelectorAll('.card, .soon-card');
+    const cards = document.querySelectorAll('.card');
     let count = 0;
     cards.forEach(c => {
       const show = cat === 'all' || c.dataset.category === cat;
